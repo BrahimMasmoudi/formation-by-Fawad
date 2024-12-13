@@ -1,8 +1,10 @@
 <template>
-  <h1>Welcome To our Notes app!</h1>
+  <h1 >
+    Welcome To our Todos app!
+  </h1>
+
 </template>
 <script setup lang="ts">
-
 </script>
 
 
