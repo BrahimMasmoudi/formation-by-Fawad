@@ -5,15 +5,19 @@
     <br>
 
     <TodoList :todos="recentTodos"/>
+
   </div>
 </template>
 <script setup lang="ts">
 
 import {useTodoSTore} from "~/stores/todo";
 
-const {todos} = useTodoSTore()
+const todoStore = useTodoSTore()
 
-const recentTodos = computed(()=> todos.slice(-2).reverse())
+await todoStore.fetchTodos()
+
+const recentTodos = computed(()=> todoStore.todos?.slice(-2).reverse())
+
 </script>
 
 

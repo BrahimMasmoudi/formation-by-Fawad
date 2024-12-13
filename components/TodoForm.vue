@@ -1,6 +1,5 @@
 <template>
   <form @submit.prevent="handleSubmit">
-    {{ todo }}
     <div>
       <label for="title">Title</label>
       <input type="text" id="title" required v-model="form.title"></input>

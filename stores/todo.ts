@@ -1,43 +1,43 @@
 import {defineStore} from "pinia";
 import type {Todo} from "~/types/todo";
-import SecureLS from "secure-ls";
 
 export const useTodoSTore = defineStore('todo', () => {
-    const todos = ref<Todo[]>([{
-        id: 1,
-        title: 'Task 1',
-        description: 'This is task 1',
-        isCompleted: false,
-        createdAt: new Date().toISOString()
-    }, {
-        id: 2,
-        title: 'Task 2',
-        description: 'This is task 2',
-        isCompleted: false,
-        createdAt: new Date().toISOString()
-    }, {
-        id: 3,
-        title: 'Task 3',
-        description: 'This is task 3',
-        isCompleted: true,
-        createdAt: new Date().toISOString()
-    }])
+    const todos = ref<Todo[]>([])
 
     const getTodoById = (id: number) => todos.value.find((todo) => todo.id === id)
 
-
-    const addTodo = (todo: Todo) => todos.value.push(todo)
-
-    const updateTodo = (updateTodo: Todo) => {
-        const index = todos.value.findIndex((todo) => todo.id === updateTodo.id)
-
-        if (index >= 0) {
-            todos.value[index] = updateTodo
+    const fetchTodos = async () => {
+        try {
+            const {data} = await useFetch<{ result: Todo[], success: boolean, statusCode: number }>('/api/todos')
+            if (data.value) {
+                todos.value = data?.value?.result ?? []
+            }
+        } catch (e) {
+            console.error('failted to fetch', e)
         }
     }
 
-    const deleteTodo = (id: number) => {
-        todos.value = todos.value.filter((todo) => todo.id === id)
+    const addTodo = async (todo: Todo) => {
+        await useFetch<Todo[]>('/api/todos', {
+            method: 'POST',
+            body: todo
+        })
+    }
+
+    const updateTodo = async (updateTodo: Todo) => {
+        const {data} = await useFetch<Todo[]>('/api/todos', {
+            method: 'PUT',
+            body: updateTodo
+        })
+
+    }
+
+    const deleteTodo = async (id: number) => {
+        const {data} = await useFetch<Todo[]>('/api/todos', {
+            method: 'DELETE',
+            body: {id}
+        })
+
     }
 
     const updateIsCompleted = (id: number) => {
@@ -50,27 +50,11 @@ export const useTodoSTore = defineStore('todo', () => {
 
     return {
         todos,
-        getTodoById,
         addTodo,
+        getTodoById,
         updateTodo,
         deleteTodo,
-        updateIsCompleted
-    }
-}, {
-    persist: {
-        storage: {
-            getItem(key) {
-                return new SecureLS({
-                    encodingType: 'des',
-                    encryptionSecret: '#&@fcvhgjhbkjnl'
-                }).get(key)
-            },
-            setItem(key, value) {
-                return new SecureLS({
-                    encodingType: 'des',
-                    encryptionSecret: '#&@fcvhgjhbkjnl'
-                }).set(key, value)
-            }
-        }
+        updateIsCompleted,
+        fetchTodos
     }
 })
