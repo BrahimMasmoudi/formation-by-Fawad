@@ -10,7 +10,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia-plugin-persistedstate/nuxt": "1.2.1",
+    "@pinia/nuxt": "0.5.4",
     "nuxt": "^3.14.1592",
+    "pinia": "^2.3.0",
+    "secure-ls": "^2.0.0",
     "vue": "latest",
     "vue-router": "latest"
   }
